@@ -23,11 +23,43 @@ export default function Login() {
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  
+  try {
+    const response = await fetch('http://localhost:8000/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      // Save token and user data
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('token_type', data.token_type);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      alert('Login successful!');
+      // Redirect to dashboard or home page
+      window.location.href = '/';
+    } else {
+      alert(data.detail || 'Login failed');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to connect to backend. Make sure it\'s running on port 8000');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16 hero-bg">

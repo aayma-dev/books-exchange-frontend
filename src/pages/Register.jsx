@@ -29,11 +29,52 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const handle = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  // Check if passwords match
+  if (form.password !== form.confirm) {
+    alert("Passwords don't match!");
+    return;
+  }
+  
+  setLoading(true);
+  
+  try {
+    const response = await fetch('http://localhost:8000/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: form.name,
+        email: form.email,
+        city: form.city,
+        password: form.password
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      // Save token and user data
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('token_type', data.token_type);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      alert('Registration successful!');
+      // Redirect to dashboard or home page
+      window.location.href = '/';
+    } else {
+      alert(data.detail || 'Registration failed');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Failed to connect to backend. Make sure it\'s running on port 8000');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-16 hero-bg">

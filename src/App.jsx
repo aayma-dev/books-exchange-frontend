@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
+
 import Footer from "./components/layout/Footer";
 
 // Pages (These are correctly located in src/pages)
@@ -24,8 +25,10 @@ import MyBooks from "./components/dashboard/MyBooks";
 import ScanQR from "./components/qr/ScanQR";
 import BookTimeline from "./components/qr/BookTimeline";
 
+
 export default function App() {
   return (
+     
     <BrowserRouter>
       <div className="flex flex-col min-h-screen bg-[#0d0d0d]">
         <Navbar />
